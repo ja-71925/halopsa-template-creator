@@ -18,20 +18,23 @@ if "username" not in st.session_state:
     st.session_state.username = ""
 
 if not st.session_state.authenticated:
-    st.subheader("🔐 Login")
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
+    login_container = st.empty()
+    with login_container.container():
+        st.subheader("🔐 Login")
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
 
-    if st.button("Login"):
-        if username in VALID_USERS and password == VALID_USERS[username]:
-            st.session_state.authenticated = True
-            st.session_state.username = username
-            st.success(f"✅ Welcome, {username}! You are now logged in.")
-        else:
-            st.error("❌ Invalid username or password")
+        if st.button("Login"):
+            if username in VALID_USERS and password == VALID_USERS[username]:
+                st.session_state.authenticated = True
+                st.session_state.username = username
+                st.success(f"✅ Welcome, {username}! You are now logged in.")
+                st.rerun()
+            else:
+                st.error("❌ Invalid username or password")
 
-    if not st.session_state.authenticated:
-        st.stop() # Stops execution for unauthenticated users
+        if not st.session_state.authenticated:
+            st.stop() # Stops execution for unauthenticated users
 
 # ---------------- APP CONTENT ----------------
 
