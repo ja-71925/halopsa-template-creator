@@ -9,8 +9,8 @@ st.title("🌀 HaloPSA CSV Uploader")
 
 with st.form("upload_form"):
     st.subheader("🔐 HaloPSA Credentials")
-    base_url = st.text_input("API Base URL (e.g. https://api.halopsa.com)")
-    oauth_url = st.text_input("OAuth2 Token URL")
+    base_url = st.text_input("API Base URL (e.g. https://example.halopsa.com/api)")
+    oauth_url = st.text_input("OAuth2 Token URL (e.g. https://example.halopsa.com/auth/token)")
     client_id = st.text_input("Client ID")
     client_secret = st.text_input("Client Secret", type="password")
 
