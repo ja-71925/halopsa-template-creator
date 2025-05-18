@@ -34,9 +34,6 @@ if not st.session_state.authenticated:
     st.stop()  # Stops execution for unauthenticated users
 
 # ---------------- APP CONTENT ----------------
-# 🎟️ Stylized Title
-st.markdown("<h1 style='text-align: center;'>🎟️ HaloPSA CSV Uploader</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: gray;'>Upload a CSV to automate ticket creation in HaloPSA</p>", unsafe_allow_html=True)
 
 # Sidebar logout button
 with st.sidebar:
