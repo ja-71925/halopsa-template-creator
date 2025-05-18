@@ -27,11 +27,12 @@ if not st.session_state.authenticated:
         if username in VALID_USERS and password == VALID_USERS[username]:
             st.session_state.authenticated = True
             st.session_state.username = username
-            st.success(f"✅ Welcome, {username}!")
-            st.experimental_rerun()
+            st.success(f"✅ Welcome, {username}! Please proceed below.")
         else:
             st.error("❌ Invalid username or password")
-    st.stop()
+
+    if st.session_state.authenticated:
+        st.stop()
 
 # Logout button
 with st.sidebar:
