@@ -31,7 +31,8 @@ if not st.session_state.authenticated:
         else:
             st.error("❌ Invalid username or password")
 
-    st.stop()  # Stops execution for unauthenticated users
+    if not st.session_state.authenticated:
+        st.stop() # Stops execution for unauthenticated users
 
 # ---------------- APP CONTENT ----------------
 
@@ -41,14 +42,15 @@ with st.sidebar:
     if st.button("Logout"):
         st.session_state.authenticated = False
         st.session_state.username = ""
-        st.experimental_rerun()
+        st.success("👋 Logged out successfully. Please refresh the page.")
+        st.stop()
 
 st.success(f"🔓 Authenticated as `{st.session_state.username}`")
 
 with st.form("upload_form"):
     st.subheader("🔐 HaloPSA Credentials")
-    base_url = st.text_input("API Base URL (e.g. https://api.halopsa.com)")
-    oauth_url = st.text_input("OAuth2 Token URL")
+    base_url = st.text_input("API Base URL (e.g. https://example.halopsa.com/api)")
+    oauth_url = st.text_input("OAuth2 Token URL (e.g. https://example.halopsa.com/auth/token)")
     client_id = st.text_input("Client ID")
     client_secret = st.text_input("Client Secret", type="password")
 
