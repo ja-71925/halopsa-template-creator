@@ -4,20 +4,19 @@ import tempfile
 from TicketTemplates import run_halo_upload
 
 st.set_page_config(page_title="HaloPSA CSV Uploader", layout="centered")
-st.title("🌀 Secure HaloPSA CSV Uploader")
+
+# 🎟️ Stylized Title
+st.markdown("<h1 style='text-align: center;'>🎟️ HaloPSA CSV Uploader</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: gray;'>Upload a CSV to automate ticket creation in HaloPSA</p>", unsafe_allow_html=True)
 
 # ---------------- AUTHENTICATION ----------------
-
-# Load credentials from secrets
 VALID_USERS = st.secrets["credentials"]
 
-# Set session defaults
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 if "username" not in st.session_state:
     st.session_state.username = ""
 
-# Login form
 if not st.session_state.authenticated:
     st.subheader("🔐 Login")
     username = st.text_input("Username")
@@ -27,14 +26,14 @@ if not st.session_state.authenticated:
         if username in VALID_USERS and password == VALID_USERS[username]:
             st.session_state.authenticated = True
             st.session_state.username = username
-            st.success(f"✅ Welcome, {username}! Please proceed below.")
+            st.success(f"✅ Welcome, {username}! You are now logged in.")
         else:
             st.error("❌ Invalid username or password")
 
-    if st.session_state.authenticated:
+    if not st.session_state.authenticated:
         st.stop()
 
-# Logout button
+# Sidebar logout button
 with st.sidebar:
     st.write(f"👤 Logged in as: `{st.session_state.username}`")
     if st.button("Logout"):
@@ -43,8 +42,7 @@ with st.sidebar:
         st.experimental_rerun()
 
 # ---------------- APP CONTENT ----------------
-
-st.success(f"🔓 Authenticated as {st.session_state.username}")
+st.success(f"🔓 Authenticated as `{st.session_state.username}`")
 
 with st.form("upload_form"):
     st.subheader("🔐 HaloPSA Credentials")
