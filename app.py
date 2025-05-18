@@ -27,11 +27,16 @@ if not st.session_state.authenticated:
             st.session_state.authenticated = True
             st.session_state.username = username
             st.success(f"✅ Welcome, {username}! You are now logged in.")
+            st.experimental_rerun()
         else:
             st.error("❌ Invalid username or password")
 
-    if not st.session_state.authenticated:
-        st.stop()
+    st.stop()  # Stops execution for unauthenticated users
+
+# ---------------- APP CONTENT ----------------
+# 🎟️ Stylized Title
+st.markdown("<h1 style='text-align: center;'>🎟️ HaloPSA CSV Uploader</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: gray;'>Upload a CSV to automate ticket creation in HaloPSA</p>", unsafe_allow_html=True)
 
 # Sidebar logout button
 with st.sidebar:
@@ -41,7 +46,6 @@ with st.sidebar:
         st.session_state.username = ""
         st.experimental_rerun()
 
-# ---------------- APP CONTENT ----------------
 st.success(f"🔓 Authenticated as `{st.session_state.username}`")
 
 with st.form("upload_form"):
