@@ -3,37 +3,52 @@ import pandas as pd
 import tempfile
 from TicketTemplates import run_halo_upload
 
-# ---------- LOGIN PROTECTION ----------
-st.set_page_config(page_title="🎟️ HaloPSA CSV Uploader", layout="centered")
-st.title("🎟️ HaloPSA CSV Uploader")
+st.set_page_config(page_title="HaloPSA CSV Uploader", layout="centered")
+st.title("🌀 Secure HaloPSA CSV Uploader")
 
-# Dummy login credentials
-VALID_PASSWORD = "msp123"
+# ---------------- AUTHENTICATION ----------------
 
-# Check session state
+# Load credentials from secrets
+VALID_USERS = st.secrets["credentials"]
+
+# Set session defaults
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
+if "username" not in st.session_state:
+    st.session_state.username = ""
 
-# Show login form if not authenticated
+# Login form
 if not st.session_state.authenticated:
-    st.subheader("Please login to continue")
+    st.subheader("🔐 Login")
+    username = st.text_input("Username")
     password = st.text_input("Password", type="password")
 
     if st.button("Login"):
-        if password == VALID_PASSWORD:
+        if username in VALID_USERS and password == VALID_USERS[username]:
             st.session_state.authenticated = True
+            st.session_state.username = username
+            st.success(f"✅ Welcome, {username}!")
             st.experimental_rerun()
         else:
-            st.error("❌ Incorrect password")
-    st.stop()  # Stop the app here if not logged in
+            st.error("❌ Invalid username or password")
+    st.stop()
 
-# ---------- AUTHENTICATED AREA ----------
-st.success("✅ Logged in successfully!")
+# Logout button
+with st.sidebar:
+    st.write(f"👤 Logged in as: `{st.session_state.username}`")
+    if st.button("Logout"):
+        st.session_state.authenticated = False
+        st.session_state.username = ""
+        st.experimental_rerun()
+
+# ---------------- APP CONTENT ----------------
+
+st.success(f"🔓 Authenticated as {st.session_state.username}")
 
 with st.form("upload_form"):
     st.subheader("🔐 HaloPSA Credentials")
-    base_url = st.text_input("API Base URL (e.g. https://example.halopsa.com/api)")
-    oauth_url = st.text_input("OAuth2 Token URL (e.g. https://example.halopsa.com/auth/token)")
+    base_url = st.text_input("API Base URL (e.g. https://api.halopsa.com)")
+    oauth_url = st.text_input("OAuth2 Token URL")
     client_id = st.text_input("Client ID")
     client_secret = st.text_input("Client Secret", type="password")
 
