@@ -3,9 +3,32 @@ import pandas as pd
 import tempfile
 from TicketTemplates import run_halo_upload
 
-st.set_page_config(page_title="HaloPSA CSV Uploader", layout="centered")
+# ---------- LOGIN PROTECTION ----------
+st.set_page_config(page_title="🎟️ HaloPSA CSV Uploader", layout="centered")
+st.title("🎟️ HaloPSA CSV Uploader")
 
-st.title("🌀 HaloPSA CSV Uploader")
+# Dummy login credentials
+VALID_PASSWORD = "msp123"
+
+# Check session state
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
+
+# Show login form if not authenticated
+if not st.session_state.authenticated:
+    st.subheader("Please login to continue")
+    password = st.text_input("Password", type="password")
+
+    if st.button("Login"):
+        if password == VALID_PASSWORD:
+            st.session_state.authenticated = True
+            st.experimental_rerun()
+        else:
+            st.error("❌ Incorrect password")
+    st.stop()  # Stop the app here if not logged in
+
+# ---------- AUTHENTICATED AREA ----------
+st.success("✅ Logged in successfully!")
 
 with st.form("upload_form"):
     st.subheader("🔐 HaloPSA Credentials")
