@@ -21,7 +21,7 @@ authenticator = stauth.Authenticate(
 )
 
 # ✅ CORRECTED: use name= instead of form_name=
-authenticator.login(location="sidebar", name="Login")
+authenticator.login(location="sidebar")
 
 auth_status = st.session_state.get("authentication_status", None)
 username = st.session_state.get("username", None)
