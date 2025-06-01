@@ -4,7 +4,7 @@ import tempfile
 from TicketTemplates import run_halo_upload
 
 # ---------- Safely load secrets ----------
-credentials = {k: dict(v) for k, v in st.secrets["credentials"].items()}
+credentials = {k: dict(v) for k, v in st.secrets["credentials"]["usernames"].items()}
 cookie = dict(st.secrets["cookie"])
 
 config = {
@@ -14,25 +14,22 @@ config = {
 
 # ---------- Authentication ----------
 authenticator = stauth.Authenticate(
-    credentials=config['credentials'],
-    cookie_name=config['cookie']['name'],
-    key=config['cookie']['key'],
-    cookie_expiry_days=config['cookie']['expiry_days']
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days']
 )
 
-# ✅ CORRECTED: use name= instead of form_name=
-authenticator.login(location="sidebar")
-
-auth_status = st.session_state.get("authentication_status", None)
-username = st.session_state.get("username", None)
+# ✅ Compatible with v0.2.x / v0.3.x
+name, auth_status, username = authenticator.login(location="main")
 
 if auth_status:
     st.session_state.username = username
     user_info = config["credentials"]["usernames"][username]
     role = user_info.get("role", "user")
 
-    st.sidebar.success(f"👤 Logged in as {username} ({role})")
-    authenticator.logout(location="sidebar", button_name="Logout")
+    st.sidebar.success(f"👤 Logged in as {user_info['name']} ({role})")
+    authenticator.logout("Logout", "sidebar")
 
 elif auth_status is False:
     st.error("❌ Invalid username or password")
