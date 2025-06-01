@@ -1,13 +1,15 @@
 import streamlit as st
 import streamlit_authenticator as stauth
 import tempfile
-import copy
 from TicketTemplates import run_halo_upload
 
-# ---------- Load config from secrets.toml (read-only) ----------
+# ---------- Safely load secrets ----------
+credentials = {k: dict(v) for k, v in st.secrets["credentials"].items()}
+cookie = dict(st.secrets["cookie"])
+
 config = {
-    "credentials": copy.deepcopy(st.secrets["credentials"]),
-    "cookie": copy.deepcopy(st.secrets["cookie"])
+    "credentials": {"usernames": credentials},
+    "cookie": cookie
 }
 
 # ---------- Authentication ----------
