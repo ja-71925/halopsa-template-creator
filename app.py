@@ -20,7 +20,8 @@ authenticator = stauth.Authenticate(
     config['cookie']['expiry_days']
 )
 
-name, auth_status, username = authenticator.login("Login", location="sidebar")
+name, auth_status = authenticator.login("Login", location="sidebar")
+username = name  # Alias to keep rest of the logic consistent
 
 if auth_status:
     st.session_state.username = username
