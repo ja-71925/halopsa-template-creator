@@ -21,7 +21,7 @@ authenticator = stauth.Authenticator(
 )
 
 # ✅ Compatible with v0.2.x / v0.3.x
-name, authentication_status, username = authenticator.login('Login', 'main')
+name, authentication_status, username = authenticator.login(key='Login', location='sidebar')
 
 if authentication_status:
     st.session_state.username = username
