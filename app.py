@@ -1,15 +1,16 @@
 import streamlit as st
 import streamlit_authenticator as stauth
 import tempfile
+import copy
 from TicketTemplates import run_halo_upload
 
-# ------------- Load credentials from secrets.toml -------------
+# ---------- Load config from secrets.toml (read-only) ----------
 config = {
-    "credentials": st.secrets["credentials"],
-    "cookie": st.secrets["cookie"]
+    "credentials": copy.deepcopy(st.secrets["credentials"]),
+    "cookie": copy.deepcopy(st.secrets["cookie"])
 }
 
-# ------------- Authentication -------------
+# ---------- Authentication ----------
 authenticator = stauth.Authenticate(
     config['credentials'],
     config['cookie']['name'],
@@ -34,7 +35,7 @@ else:
     st.warning("Please enter your credentials.")
     st.stop()
 
-# ------------- Main App Interface -------------
+# ---------- Main App Interface ----------
 st.markdown("<h1 style='text-align: center;'>🎟️ HaloPSA CSV Uploader</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; color: gray;'>Upload a CSV to automate ticket templates creation in HaloPSA</p>", unsafe_allow_html=True)
 
