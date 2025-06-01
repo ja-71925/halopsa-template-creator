@@ -20,7 +20,8 @@ authenticator = stauth.Authenticate(
     cookie_expiry_days=config['cookie']['expiry_days']
 )
 
-authenticator.login(location="sidebar", form_name="Login")
+# ✅ CORRECTED: use name= instead of form_name=
+authenticator.login(location="sidebar", name="Login")
 
 auth_status = st.session_state.get("authentication_status", None)
 username = st.session_state.get("username", None)
@@ -31,7 +32,7 @@ if auth_status:
     role = user_info.get("role", "user")
 
     st.sidebar.success(f"👤 Logged in as {username} ({role})")
-    authenticator.logout("Logout", location="sidebar")
+    authenticator.logout(location="sidebar", button_name="Logout")
 
 elif auth_status is False:
     st.error("❌ Invalid username or password")
