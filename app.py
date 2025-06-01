@@ -1,58 +1,47 @@
 import streamlit as st
-import pandas as pd
+import streamlit_authenticator as stauth
 import tempfile
 from TicketTemplates import run_halo_upload
 
-st.set_page_config(page_title="HaloPSA CSV Uploader", layout="centered")
+# ------------- Load credentials from secrets.toml -------------
+config = {
+    "credentials": st.secrets["credentials"],
+    "cookie": st.secrets["cookie"]
+}
 
-# 🎟️ Stylized Title
+# ------------- Authentication -------------
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days']
+)
+
+name, auth_status, username = authenticator.login("Login", "main")
+
+if auth_status:
+    st.session_state.username = username
+    user_info = config["credentials"]["usernames"][username]
+    role = user_info.get("role", "user")
+
+    st.sidebar.success(f"👤 Logged in as {username} ({role})")
+    authenticator.logout("Logout", "sidebar")
+
+elif auth_status is False:
+    st.error("❌ Invalid username or password")
+    st.stop()
+else:
+    st.warning("Please enter your credentials.")
+    st.stop()
+
+# ------------- Main App Interface -------------
 st.markdown("<h1 style='text-align: center;'>🎟️ HaloPSA CSV Uploader</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; color: gray;'>Upload a CSV to automate ticket templates creation in HaloPSA</p>", unsafe_allow_html=True)
 
-# ---------------- AUTHENTICATION ----------------
-VALID_USERS = st.secrets["credentials"]
-
-if "authenticated" not in st.session_state:
-    st.session_state.authenticated = False
-if "username" not in st.session_state:
-    st.session_state.username = ""
-
-if not st.session_state.authenticated:
-    login_container = st.empty()
-    with login_container.container():
-        st.subheader("🔐 Login")
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-
-        if st.button("Login"):
-            if username in VALID_USERS and password == VALID_USERS[username]:
-                st.session_state.authenticated = True
-                st.session_state.username = username
-                st.success(f"✅ Welcome, {username}! You are now logged in.")
-                st.rerun()
-            else:
-                st.error("❌ Invalid username or password")
-
-        if not st.session_state.authenticated:
-            st.stop() # Stops execution for unauthenticated users
-
-# ---------------- APP CONTENT ----------------
-
-# Sidebar logout button
-with st.sidebar:
-    st.write(f"👤 Logged in as: `{st.session_state.username}`")
-    if st.button("Logout"):
-        st.session_state.authenticated = False
-        st.session_state.username = ""
-        st.success("👋 Logged out successfully. Please refresh the page.")
-        st.stop()
-
-st.success(f"🔓 Authenticated as `{st.session_state.username}`")
-
 with st.form("upload_form"):
     st.subheader("🔐 HaloPSA Credentials")
-    base_url = st.text_input("API Base URL (e.g. https://example.halopsa.com/api)")
-    oauth_url = st.text_input("OAuth2 Token URL (e.g. https://example.halopsa.com/auth/token)")
+    base_url = st.text_input("API Base URL")
+    oauth_url = st.text_input("OAuth2 Token URL")
     client_id = st.text_input("Client ID")
     client_secret = st.text_input("Client Secret", type="password")
 
