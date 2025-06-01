@@ -13,7 +13,7 @@ config = {
 }
 
 # ---------- Authentication ----------
-authenticator = stauth.Authenticate(
+authenticator = stauth.Authenticator(
     config['credentials'],
     config['cookie']['name'],
     config['cookie']['key'],
@@ -21,9 +21,9 @@ authenticator = stauth.Authenticate(
 )
 
 # ✅ Compatible with v0.2.x / v0.3.x
-name, auth_status, username = authenticator.login(location="main")
+name, authentication_status, username = authenticator.login('Login', 'main')
 
-if auth_status:
+if authentication_status:
     st.session_state.username = username
     user_info = config["credentials"]["usernames"][username]
     role = user_info.get("role", "user")
@@ -31,7 +31,7 @@ if auth_status:
     st.sidebar.success(f"👤 Logged in as {user_info['name']} ({role})")
     authenticator.logout("Logout", "sidebar")
 
-elif auth_status is False:
+elif authentication_status is False:
     st.error("❌ Invalid username or password")
     st.stop()
 else:
