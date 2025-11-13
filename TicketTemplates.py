@@ -34,22 +34,27 @@ def get_oauth_token():
 # Function to process CSV file and map tasks
 def process_csv(file_path):
     tasks_map = {}
-    
-    # Open and read the CSV file
-    with open(file_path, newline='', encoding='utf-8') as csvfile:
-        reader = csv.DictReader(csvfile)
-        
-        # Iterate through each row and group tasks based on Type, Subtype, and Item
-        for row in reader:
-            key = f"{row['Type']}>{row['Subtype']}>{row['Item']}"
-            task = row.get('Task', '').strip()
-            priority = row.get('Priority', '1')
-            
-            if task:
-                if key not in tasks_map:
-                    tasks_map[key] = []
-                tasks_map[key].append({"text": task})
-    
+
+    try:
+        with open(file_path, newline='', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+            rows = list(reader)
+    except UnicodeDecodeError:
+        # Try Windows-1252 encoding if UTF-8 fails
+        with open(file_path, newline='', encoding='cp1252') as csvfile:
+            reader = csv.DictReader(csvfile)
+            rows = list(reader)
+
+    for row in rows:
+        key = f"{row['Type']}>{row['Subtype']}>{row['Item']}"
+        task = row.get('Task', '').strip()
+        priority = row.get('Priority', '1')
+
+        if task:
+            if key not in tasks_map:
+                tasks_map[key] = []
+            tasks_map[key].append({"text": task})
+
     return tasks_map
 
 # Function to create categories in HaloPSA
